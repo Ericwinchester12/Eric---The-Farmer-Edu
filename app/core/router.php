@@ -26,15 +26,15 @@ class Router {
     public static function enviarRota(): void {
         self::carregarRotas();
 
-        // Pega a URI da requisição (ex: /the-farmer-edu/login)
+        // Pega a URI da requisição (ex: /Eric/The-Farmer-Edu/)
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         
-        // Pega o caminho base do script (ex: /the-farmer-edu/public/index.php)
-        $scriptName = dirname($_SERVER['SCRIPT_NAME']);
+        // Pega o caminho base do projeto (sobe 2 níveis: public -> raiz)
+        $basePath = dirname(dirname($_SERVER['SCRIPT_NAME']));
 
-        // Remove a subpasta da URI para obter apenas a rota relativa (ex: /login)
-        if ($scriptName !== '/' && $scriptName !== '\\') {
-            $uri = str_replace($scriptName, '', $uri);
+        // Remove o caminho base da URI para obter apenas a rota relativa (ex: /)
+        if ($basePath !== '/' && $basePath !== '\\') {
+            $uri = str_replace($basePath, '', $uri);
         }
 
         // Garante que a URI comece com '/' e não fique vazia
