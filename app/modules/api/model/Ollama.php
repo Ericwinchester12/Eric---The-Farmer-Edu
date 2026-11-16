@@ -38,8 +38,6 @@
         }
     }
 
-    
-
     class Sophia extends Ollama {
         public function __construct() {
             parent::__construct();
