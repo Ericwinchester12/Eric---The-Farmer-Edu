@@ -23,7 +23,8 @@
 
         <span class="titulo-modulo">MODELAGEM DE SISTEMAS | AI-APW-01-M-25-13150</span>
 
-        <button id="botaoUsuario" class="botao-usuario" type="button" aria-label="Perfil do usuário" aria-expanded="false" aria-controls="menuUsuario">
+        <button id="botaoUsuario" class="botao-usuario" type="button" aria-label="Perfil do usuário"
+            aria-expanded="false" aria-controls="menuUsuario">
             <img class="usuario-avatar" src="submissoes/file?type=img&file=icone_user.png" alt="iconiEDU">
         </button>
     </header>
@@ -74,7 +75,8 @@
                 <h2 class="atv-sub">O que você precisa fazer</h2>
                 <ol class="atv-requisitos" id="atvRequisitos"></ol>
                 <p class="atv-meta"><b>Linguagem:</b> <span id="atvLinguagem"></span><br>
-                    <b>Nota:</b> <span id="atvNota"></span></p>
+                    <b>Nota:</b> <span id="atvNota"></span>
+                </p>
             </article>
 
             <article>
@@ -95,6 +97,16 @@
                     <div class="prazo" id="atvPrazo" hidden></div>
 
                     <p id="texto">Escreva seu código direto na plataforma clicando em "Começar".</p>
+
+
+                    <!-- Área onde os arquivos selecionados vão aparecer -->
+                    <div class="lista-anexos" id="listaAnexos"></div>
+
+                    <!-- Input real escondido -->
+                    <input type="file" id="inputArquivoReal" multiple style="display: none;">
+
+                    <!-- Botão para anexar arquivo -->
+                    <button class="btn-adicionar" id="opcaoArquivo">Anexar</button>
 
                     <form action="iniciarAtv" method="get">
                         <!-- O id da atividade é enviado para a próxima página para carregar a atividade correta. -->
@@ -119,7 +131,8 @@
     </footer>
 
     <!-- JSON serializado no HTML: o JavaScript usa esse bloco para montar a tela sem outra requisição. -->
-   <script type="application/json" id="dadosAtividade"><?= json_encode($dadosAtividade ?? null, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+    <script type="application/json"
+        id="dadosAtividade"><?= json_encode($dadosAtividade ?? null, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
     <script src="submissoes/file?type=js&file=main.js"></script>
 </body>
 
