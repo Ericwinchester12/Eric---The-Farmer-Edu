@@ -155,7 +155,7 @@
             A linguagem do código é esta:{$linguagem}
             Responda SOMENTE JSON: 
             {"probabilidade_ia": 0-100,
-            "motivo": "até 3 frases em português"}
+            "motivo": "explicação até 3 frases em português"}
             PROMPT;
             return $this->gerar(true);
         }
