@@ -6,7 +6,7 @@ class SubmissoesModel
     private PDO $pdo;
 
     /** Linguagem do banco -> chave usada em atividade.js (LINGUAGENS). */
-     private const MAPA_LINGUAGEM = [
+    private const MAPA_LINGUAGEM = [
         'web' => 'web', 'html' => 'web', 'css' => 'web',
         'javascript' => 63, 'js' => 63,
         'python' => 71,
@@ -61,13 +61,18 @@ class SubmissoesModel
             $limite = $dt->format('c'); // ISO 8601 com fuso
         }
 
+        // Atividade do tipo "texto" não usa linguagem de programação.
+        $tipo = $a['tipo_atividade'] ?? 'codigo';
+        $idLinguagem = $tipo === 'texto' ? 'texto' : (self::MAPA_LINGUAGEM[$lang] ?? 'web');
+
         return [
             'id'            => (int) $a['id_atividade'],
             'chave'         => (string) $a['id_atividade'],
             'titulo'        => (string) $a['titulo'],
             'descricao'     => (string) ($a['descricao'] ?? ''),
             'requisitos'    => $requisitos,
-            'idLinguagem'   => self::MAPA_LINGUAGEM[$lang] ?? 'web',
+            'idLinguagem'   => $idLinguagem,
+            'tipo'          => $tipo,
             'notaMax'       => 10,
             'notaMin'       => 6,
             'limiteEntrega' => $limite,
