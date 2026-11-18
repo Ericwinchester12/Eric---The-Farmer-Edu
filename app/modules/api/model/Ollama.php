@@ -1,5 +1,6 @@
 <?php
     require_once "Config.php";
+    require_once "database.php";
 
     class Ollama {
         protected string $host;
@@ -162,9 +163,47 @@
             {"probabilidade_ia": 0-100,
             "motivo": "explicação até 3 frases em português"}
             PROMPT;
-            return $this->gerar(true);
+
+            // $respostaSIAE = json_encode($this->gerar(true));
+            // $respostaSIAE = trim(explode("</think>", $respostaSIAE)[1]);
+            // return json_encode($respostaSIAE, true);
+            // // return $respostaSIAE;
+
+            $resposta = $this->gerar(true);
+            preg_match("/\{.*\}/s", $resposta, $certo);
+            return json_decode($certo[0], true);
+            // print_r($certo);
+            // return "";
         }
 
     }
 
+    
+
+    class seiLa
+    {
+        public static function acessarProbabilidadeIa(PDO $pdo, int $id_submissao)
+        {
+            $stmt = $pdo->prepare(
+                "SELECT probabilidade_ia, motivo_ia
+                FROM feedback_ia
+                WHERE id_submissao = ?"
+            );
+
+            $stmt->execute([$id_submissao]);
+            $feedbackProbabilidade = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $percentual = $feedbackProbabilidade['probabilidade_ia'];
+            $motivo = $feedbackProbabilidade['motivo_ia'];
+
+            return "Probabilidade de uso de IA: {$percentual}% \nMotivo: {$motivo}";
+
+        }
+    }
+
 ?>
+
+$pdo = iniciarPDO();
+$textoFeedback = seiLa::acessarProbabilidadeIa($pdo, $idSubmissao);
+
+$textoFeedback
