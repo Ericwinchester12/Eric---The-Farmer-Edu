@@ -1,4 +1,4 @@
-      // ====================================================================================================
+// ====================================================================================================
       // FARMEDU 3D — 05-progresso-e-salvamento.js (Fase 3B da refatoração: seção 05)
       // Script clássico carregado em sequência por fazenda.js (lista MONTAGEM_DA_FAZENDA); não é aberto sozinho. É um trecho do
       // antigo corpo de iniciarFarmEdu(), copiado sem alterações, exceto que cada função de nível superior foi escrita como
@@ -322,6 +322,31 @@
         iniciadoEm: Number.isFinite(objetivosSalvos.iniciadoEm) && objetivosSalvos.iniciadoEm > 0 ? objetivosSalvos.iniciadoEm : null,   // null = quadro ainda não avaliado neste save
         vistoAte: Number.isFinite(objetivosSalvos.vistoAte) ? objetivosSalvos.vistoAte : 0,   // última vez que o jogador abriu o quadro (selo de "novo")
       };
+      // ---- Etapa 3 (conquistas e Diário): registros novos; saves antigos começam vazios e são preenchidos pela seção 30f ----
+      //   conquistas.desbloqueadas → { id: { nivel: instante | null } } (nivel 1 nas comuns/especiais/secretas; 1–3 nas progressivas).
+      //                              null = já valia ANTES do Diário existir neste save (data desconhecida, não é inventada).
+      //   diario.registros          → { chave: { categoria, quando, icone, titulo, texto } }; a chave única impede repetir registros.
+      //   diario.iniciadoEm         → quando o Diário passou a existir neste save (null = ainda não preparado).
+      //   NÃO guardam progresso próprio: as condições são lidas das fontes que já existem (níveis, objetivos.contadores, eventos).
+      const conquistasSalvas = estado.conquistas && typeof estado.conquistas === 'object' ? estado.conquistas : {};
+      const desbloqueadasSalvas = conquistasSalvas.desbloqueadas && typeof conquistasSalvas.desbloqueadas === 'object' ? conquistasSalvas.desbloqueadas : {};
+      estado.conquistas = {
+        desbloqueadas: Object.fromEntries(Object.entries(desbloqueadasSalvas).filter(([id, niveis]) => /^[a-z0-9-]{1,40}$/.test(id) && niveis && typeof niveis === 'object')
+          .map(([id, niveis]) => [id, Object.fromEntries(Object.entries(niveis).filter(([nivel, quando]) => /^[1-3]$/.test(nivel) && (quando === null || (Number.isFinite(quando) && quando > 0))))])
+          .filter(([, niveis]) => Object.keys(niveis).length)),
+        iniciadoEm: Number.isFinite(conquistasSalvas.iniciadoEm) && conquistasSalvas.iniciadoEm > 0 ? conquistasSalvas.iniciadoEm : null,
+      };
+      const diarioSalvo = estado.diario && typeof estado.diario === 'object' ? estado.diario : {};
+      const registrosSalvos = diarioSalvo.registros && typeof diarioSalvo.registros === 'object' ? diarioSalvo.registros : {};
+      const textoSeguro = (valor, limite) => typeof valor === 'string' ? valor.slice(0, limite) : '';
+      estado.diario = {
+        registros: Object.fromEntries(Object.entries(registrosSalvos).filter(([chave, registro]) => typeof chave === 'string' && chave.length <= 80 && registro && typeof registro === 'object'
+          && ['fazenda', 'descobertas', 'colecao', 'historias'].includes(registro.categoria))
+          .map(([chave, registro]) => [chave, { categoria: registro.categoria, quando: Number.isFinite(registro.quando) && registro.quando > 0 ? registro.quando : null,
+            icone: textoSeguro(registro.icone, 8), titulo: textoSeguro(registro.titulo, 120), texto: textoSeguro(registro.texto, 600) }])),
+        iniciadoEm: Number.isFinite(diarioSalvo.iniciadoEm) && diarioSalvo.iniciadoEm > 0 ? diarioSalvo.iniciadoEm : null,
+        vistoAte: Number.isFinite(diarioSalvo.vistoAte) ? diarioSalvo.vistoAte : 0,
+      };
       // Etapa 2: ponto ÚNICO de aviso ao quadro de objetivos. Os sistemas chamam avisarObjetivos(tipo, detalhe) logo depois de uma
       // ação concluída (colheita, poção preparada...). Fica aqui, no início da montagem, para existir antes de quem a chama; o quadro
       // (seção 30e) só se inscreve como ouvinte. Sem ouvinte (ou se um ouvinte falhar), a ação original continua igual.
@@ -329,8 +354,9 @@
       const avisarObjetivos = function avisarObjetivos(tipo, detalhe) { for (const ouvir of ouvintesDosObjetivos) { try { ouvir(tipo, detalhe || {}); } catch (erro) { console.error("[FarmEdu] Quadro de objetivos:", erro); } } };
       // Backend: com o servidor, não grava no localStorage e agenda o envio ao banco (window.FarmEduSincronia, seção 34).
       const salvarProgresso = function salvarProgresso() {
-        try { if (!SERVIDOR_DA_FAZENDA) localStorage.setItem(CHAVE_SALVAMENTO, JSON.stringify(estado)); } catch (erro) { }
+        try { if (!SERVIDOR_DA_FAZENDA) localStorage.setItem(CHAVE_SALVAMENTO, JSON.stringify(estado)); } catch (erro) { return false; }
         if (window.FarmEduSincronia) window.FarmEduSincronia.agendar();
+        return true;
       };
       salvarProgresso();   // grava os campos novos de saves antigos uma única vez
 
