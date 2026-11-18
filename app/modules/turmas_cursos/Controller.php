@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/Model.php';
+require_once __DIR__ . '/../auth/Model.php';
 require_once __DIR__ . '/../../core/session.php';
 
 class CursosController

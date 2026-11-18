@@ -705,7 +705,7 @@
                 echo 'A Fazenda é exclusiva para alunos.';
                 exit;
             }
-            header('Location: ' . $this->baseDaAplicacao() . '/auth/loginAluno');
+            solicitarPerfilDeAcesso();
             exit;
         }
 
