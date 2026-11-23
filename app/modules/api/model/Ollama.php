@@ -33,7 +33,7 @@
             curl_setopt($curlOllama, CURLOPT_POSTFIELDS, $this->payload);
             curl_setopt($curlOllama, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($curlOllama, CURLOPT_CONNECTTIMEOUT, 3);
-            curl_setopt($curlOllama, CURLOPT_TIMEOUT, 8);
+            curl_setopt($curlOllama, CURLOPT_TIMEOUT, 60*5);
             curl_setopt($curlOllama, CURLOPT_SSL_VERIFYPEER, false);
 
             $response = curl_exec($curlOllama);
@@ -90,7 +90,7 @@
                         CURLOPT_POST => true,
                         CURLOPT_POSTFIELDS => $jsonPayload,
                         CURLOPT_CONNECTTIMEOUT => 5,
-                        CURLOPT_TIMEOUT => 25,
+                        CURLOPT_TIMEOUT => 60*5,
                         CURLOPT_SSL_VERIFYPEER => false,
                     ]);
 
