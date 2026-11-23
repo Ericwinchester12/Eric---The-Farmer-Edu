@@ -1,4 +1,4 @@
-0<?php
+<?php
 $xpAcumulado = 1480;
 $pontosDisponiveis = intdiv($xpAcumulado, 80);
 
