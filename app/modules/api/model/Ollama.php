@@ -1,6 +1,6 @@
 <?php
     require_once "Config.php";
-    require_once "database.php";
+    require_once __DIR__ . "/../../../core/database.php";
 
     class Ollama {
         protected string $host;
@@ -17,7 +17,7 @@
             ];
         }
 
-        protected function gerar(bool $think = false): string{ // manda o prompt e retorna a resposta da IA
+        protected function gerar(bool $think = true): string{ // manda o prompt e retorna a resposta da IA
             $array_payload = [
                 "model" => $this->model,
                 "prompt" => $this->prompt,
@@ -253,14 +253,20 @@
             "motivo": "explicação até 3 frases em português"}
             PROMPT;
 
-            // $respostaSIAE = json_encode($this->gerar(true));
-            // $respostaSIAE = trim(explode("</think>", $respostaSIAE)[1]);
-            // return json_encode($respostaSIAE, true);
-            // // return $respostaSIAE;
+            $respostaSIAE = $this->gerar(true);
+            // preg_match("/\{.*\}/s", $respostaSIAE, $respostaFormatada);
+            // if($respostaFormatada[0] === null){
+            $respostaFormatada = json_decode(trim(explode('think>', $respostaSIAE, 3)[2]), true);
+            // } else {
+                // $respostaFormatada = json_decode($respostaFormatada[0], true);
+            // }
+            return $respostaFormatada;
+            // return $respostaSIAE;
 
-            $resposta = $this->gerar(true);
-            preg_match("/\{.*\}/s", $resposta, $certo);
-            return json_decode($certo[0], true);
+            // $resposta = $this->gerar();
+            // preg_match("/\{.*\}/s", $resposta, $certo);
+            // return json_decode($certo[0], true) ?? $resposta;
+            // return $resposta;
             // print_r($certo);
             // return "";
         }
