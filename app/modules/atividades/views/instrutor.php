@@ -38,6 +38,13 @@
             Pessoas
         </button>
 
+        <a class="menu-item" id="botao-notas" href="notas/instrutor">
+            <span class="icone">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+            </span>
+            Notas
+        </a>
+
         <a class="menu-item back" href="turmas_cursos/instrutor">
             <span class="icone">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4"/><path d="M14 8l4 4-4 4M18 12H9"/></svg>
