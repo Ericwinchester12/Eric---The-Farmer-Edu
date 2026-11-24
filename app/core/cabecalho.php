@@ -13,6 +13,11 @@
  * ============================================================================
  */
 
+if (defined('TFE_CABECALHO_RENDERED')) {
+    return;
+}
+define('TFE_CABECALHO_RENDERED', true);
+
 // 1. Resolução do usuário autenticado
 if (!function_exists('dadosUsuarioLogado')) {
     if (file_exists(__DIR__ . '/session.php')) {
@@ -23,6 +28,10 @@ if (!function_exists('dadosUsuarioLogado')) {
 }
 
 $currentUser = $u ?? $usuario ?? (function_exists('usuarioLogado') ? usuarioLogado() : null) ?? ($_SESSION['usuario'] ?? []);
+if (!is_array($currentUser)) {
+    $currentUser = [];
+}
+$isLoggedIn = !empty($currentUser['idUsuario']) || !empty($currentUser['id']) || !empty($currentUser['email']);
 $userName = trim((string)($currentUser['nome'] ?? 'Usuário'));
 $userRole = strtolower((string)($currentUser['perfilAcesso'] ?? $currentUser['tipo_usuario'] ?? 'aluno'));
 $isInstructor = ($userRole === 'instrutor');
@@ -67,7 +76,16 @@ if ($isInstructor) {
     $roleBadgeBg = '#E5F9E7';
     $roleBadgeColor = '#1B5E20';
 }
+
+if (!$isLoggedIn) {
+    $roleHome = $base . '/home';
+}
+
+$tfeHeaderZ = isset($tfeHeaderZ) ? (int) $tfeHeaderZ : 1050;
 ?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- CABEÇALHO OFICIAL UNIFICADO - THE FARMER EDU -->
 <header class="tfe-topbar" id="tfeUnifiedHeader">
@@ -82,6 +100,11 @@ if ($isInstructor) {
 
         <!-- Ações do Usuário e Menu -->
         <div class="tfe-actions">
+            <?php if (!$isLoggedIn): ?>
+                <a class="tfe-guest-link" href="<?= htmlspecialchars($base . '/auth/loginAluno', ENT_QUOTES, 'UTF-8') ?>">Entrar como aluno</a>
+                <a class="tfe-guest-link" href="<?= htmlspecialchars($base . '/auth/loginInstrutor', ENT_QUOTES, 'UTF-8') ?>">Entrar como instrutor</a>
+                <a class="tfe-guest-link tfe-guest-cta" href="<?= htmlspecialchars($base . '/auth/novoUsuario', ENT_QUOTES, 'UTF-8') ?>">Cadastrar</a>
+            <?php else: ?>
             <span class="tfe-welcome">
                 Bem-vindo(a), <strong><?= htmlspecialchars($userName, ENT_QUOTES, 'UTF-8') ?></strong>
             </span>
@@ -155,10 +178,6 @@ if ($isInstructor) {
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                                 <span>Minha Fazenda</span>
                             </a>
-                            <a href="<?= htmlspecialchars($base . '/gamificacao/arvore', ENT_QUOTES, 'UTF-8') ?>" class="tfe-menu-item" role="menuitem">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                <span>Aprimoramentos</span>
-                            </a>
                             <a href="<?= htmlspecialchars($base . '/notificacoes', ENT_QUOTES, 'UTF-8') ?>" class="tfe-menu-item" role="menuitem">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                                 <span>Notificações</span>
@@ -179,6 +198,7 @@ if ($isInstructor) {
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 </header>
@@ -195,7 +215,7 @@ if ($isInstructor) {
     border-radius: 0 0 10px 10px !important;                 /* Raio de 10px na barra superior */
     position: sticky !important;
     top: 0 !important;
-    z-index: 1050 !important;
+    z-index: <?= $tfeHeaderZ ?> !important;
     font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
     box-sizing: border-box !important;
 }
@@ -232,13 +252,13 @@ if ($isInstructor) {
 }
 
 .tfe-logo-img {
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    border-radius: 50%;
-    background: #FFFFFF;
-    padding: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    width: 42px !important;
+    height: 42px !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    background: #FFFFFF !important;
+    padding: 2px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12) !important;
 }
 
 .tfe-brand-text {

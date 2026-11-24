@@ -61,7 +61,7 @@ $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
             --texto-principal:  #002D38;
             --texto-preto:      #000000;
             --texto-secundario: #727272;
-            --bg-pagina:        #F5F7F0;
+            --bg-pagina:        #FFFFFF;
             --bg-card:          #FFFFFF;
             --borda-card:       #E6E6E6;
             --cinza-50:         #F5F7F0;
